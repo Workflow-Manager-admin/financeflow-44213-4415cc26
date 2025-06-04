@@ -25,7 +25,6 @@ class FinanceFlowApp extends StatelessWidget {
           primary: primaryColor,
           secondary: accentColor,
           surface: secondaryColor,
-          // background: secondaryColor, // <-- Removed deprecated background field
         ),
         scaffoldBackgroundColor: secondaryColor,
         appBarTheme: AppBarTheme(
@@ -59,7 +58,6 @@ class MainContainer extends StatefulWidget {
 class _MainContainerState extends State<MainContainer> {
   int _selectedIndex = 0;
 
-  // Update: Wire actual budget management UI instead of placeholder
   static final List<Widget> _pages = <Widget>[
     const DashboardPage(),
     BudgetManagementPage(),
@@ -111,6 +109,252 @@ class _MainContainerState extends State<MainContainer> {
         unselectedItemColor: Colors.grey,
         onTap: _onNavTapped,
       ),
+    );
+  }
+}
+
+/// PUBLIC_INTERFACE
+/// The Budgets Management Page allows users to add, edit, and delete budget categories with amounts.
+/// The UI updates live as changes are made.
+class BudgetManagementPage extends StatefulWidget {
+  BudgetManagementPage({super.key});
+
+  @override
+  State<BudgetManagementPage> createState() => _BudgetManagementPageState();
+}
+
+class _BudgetManagementPageState extends State<BudgetManagementPage> {
+  List<_BudgetItem> _budgets = [
+    _BudgetItem(category: "Food", amount: 400.0),
+    _BudgetItem(category: "Utilities", amount: 170.0),
+    _BudgetItem(category: "Entertainment", amount: 150.0),
+  ];
+
+  void _addBudget() async {
+    final result = await showDialog<_BudgetItem>(
+      context: context,
+      builder: (context) => _BudgetDialog(),
+    );
+    if (result != null) {
+      setState(() {
+        _budgets.add(result);
+      });
+    }
+  }
+
+  void _editBudget(int idx) async {
+    final result = await showDialog<_BudgetItem>(
+      context: context,
+      builder: (context) => _BudgetDialog(
+        initialCategory: _budgets[idx].category,
+        initialAmount: _budgets[idx].amount,
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        _budgets[idx] = result;
+      });
+    }
+  }
+
+  void _deleteBudget(int idx) async {
+    bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Budget"),
+        content: const Text("Are you sure you want to delete this budget category?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          )
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      setState(() {
+        _budgets.removeAt(idx);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Color accentColor = Theme.of(context).colorScheme.secondary;
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                "Budgets",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.add),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accentColor,
+                ),
+                onPressed: _addBudget,
+                label: const Text("Add Budget"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Expanded(
+            child: _budgets.isEmpty
+                ? Center(
+                    child: Text(
+                      "No budgets set. Add a category!",
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  )
+                : Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: _budgets.length,
+                      separatorBuilder: (ctx, idx) => Divider(height: 2),
+                      itemBuilder: (ctx, idx) {
+                        final bud = _budgets[idx];
+                        return ListTile(
+                          title: Text(bud.category),
+                          subtitle: Text("\$${bud.amount.toStringAsFixed(2)}"),
+                          leading: const Icon(Icons.folder, color: Colors.blue),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                tooltip: "Edit",
+                                icon: Icon(Icons.edit, color: Colors.grey[800]),
+                                onPressed: () => _editBudget(idx),
+                              ),
+                              IconButton(
+                                  tooltip: "Delete",
+                                  icon: Icon(Icons.delete, color: Colors.redAccent),
+                                  onPressed: () => _deleteBudget(idx)
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// PRIVATE: Represents a budget category + amount.
+class _BudgetItem {
+  final String category;
+  final double amount;
+
+  _BudgetItem({required this.category, required this.amount});
+}
+
+// PUBLIC_INTERFACE
+// Dialog for adding/editing a budget category.
+class _BudgetDialog extends StatefulWidget {
+  final String? initialCategory;
+  final double? initialAmount;
+
+  const _BudgetDialog({this.initialCategory, this.initialAmount});
+
+  @override
+  State<_BudgetDialog> createState() => _BudgetDialogState();
+}
+
+class _BudgetDialogState extends State<_BudgetDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _categoryController;
+  late TextEditingController _amountController;
+
+  @override
+  void initState() {
+    _categoryController = TextEditingController(text: widget.initialCategory ?? "");
+    _amountController = TextEditingController(
+      text: widget.initialAmount != null ? widget.initialAmount!.toStringAsFixed(2) : "",
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _categoryController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      final cat = _categoryController.text.trim();
+      final amt = double.tryParse(_amountController.text.trim());
+      if (cat.isNotEmpty && amt != null && amt >= 0) {
+        Navigator.of(context).pop(_BudgetItem(category: cat, amount: amt));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.initialCategory == null ? "Add Budget" : "Edit Budget"),
+      content: Form(
+        key: _formKey,
+        child: SizedBox(
+          width: 260,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _categoryController,
+                decoration: const InputDecoration(
+                  labelText: "Category",
+                ),
+                validator: (val) =>
+                  val == null || val.trim().isEmpty ? "Please enter category" : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _amountController,
+                decoration: const InputDecoration(
+                  labelText: "Amount (\$)",
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                validator: (val) {
+                  final amt = double.tryParse(val ?? "");
+                  if (amt == null || amt < 0) return "Enter a valid positive number";
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+          onPressed: _submit,
+          child: Text(widget.initialCategory == null ? "Add" : "Save"),
+        ),
+      ],
     );
   }
 }
@@ -195,7 +439,6 @@ class _SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         child: Column(
           children: [
-            // Use new style for color alpha (for deprecation proofing)
             CircleAvatar(
               backgroundColor: color.withAlpha((0.13 * 255).round()),
               child: Icon(icon, color: color),
@@ -283,7 +526,6 @@ class _TransactionsTable extends StatelessWidget {
     },
   ];
 
-  // Removed: const _TransactionsTable({super.key});
   const _TransactionsTable();
 
   @override
