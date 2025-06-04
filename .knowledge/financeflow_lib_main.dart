@@ -1,0 +1,1 @@
+{"is_source_file": true, "file_id": 3, "git_revision": "", "state": 1, "description": "", "external_files": [], "external_methods": [], "published": [], "classes": [], "methods": [], "calls": [], "search-terms": [], "hash": "13c3fa3d8afe51c6c2894242fe8a1456", "format-version": 4, "code-base-name": "default", "filename": "financeflow/lib/main.dart", "knowledge_revision": 2}

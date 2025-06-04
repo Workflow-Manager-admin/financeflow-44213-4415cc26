@@ -1,0 +1,1 @@
+{"is_source_file": true, "file_id": 61, "git_revision": "", "state": 1, "description": "", "external_files": [], "external_methods": [], "published": [], "classes": [], "methods": [], "calls": [], "search-terms": [], "hash": "777a925d64f519435356d6faa0dda712", "format-version": 4, "code-base-name": "default", "filename": "financeflow/README.md", "knowledge_revision": 62}
