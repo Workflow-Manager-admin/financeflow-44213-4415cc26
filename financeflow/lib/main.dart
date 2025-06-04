@@ -59,15 +59,10 @@ class MainContainer extends StatefulWidget {
 class _MainContainerState extends State<MainContainer> {
   int _selectedIndex = 0;
 
-  // This would link to actual feature containers as development continues
+  // Update: Wire actual budget management UI instead of placeholder
   static final List<Widget> _pages = <Widget>[
     const DashboardPage(),
-    Placeholder(
-      fallbackHeight: double.infinity,
-      fallbackWidth: double.infinity,
-      color: Colors.indigo,
-      strokeWidth: 2,
-    ), // BudgetManagementPage (to be implemented)
+    BudgetManagementPage(),
     Placeholder(
       fallbackHeight: double.infinity,
       fallbackWidth: double.infinity,
