@@ -25,7 +25,7 @@ class FinanceFlowApp extends StatelessWidget {
           primary: primaryColor,
           secondary: accentColor,
           surface: secondaryColor,
-          background: secondaryColor,
+          // background: secondaryColor, // <-- Removed deprecated background field
         ),
         scaffoldBackgroundColor: secondaryColor,
         appBarTheme: AppBarTheme(
@@ -288,7 +288,8 @@ class _TransactionsTable extends StatelessWidget {
     },
   ];
 
-  const _TransactionsTable({super.key});
+  // Removed: const _TransactionsTable({super.key});
+  const _TransactionsTable();
 
   @override
   Widget build(BuildContext context) {
