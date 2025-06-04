@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'reports_page.dart';
 
 void main() {
   runApp(const FinanceFlowApp());
@@ -61,12 +62,7 @@ class _MainContainerState extends State<MainContainer> {
   static final List<Widget> _pages = <Widget>[
     const DashboardPage(),
     BudgetManagementPage(),
-    Placeholder(
-      fallbackHeight: double.infinity,
-      fallbackWidth: double.infinity,
-      color: Colors.deepOrange,
-      strokeWidth: 2,
-    ), // ReportsPage (to be implemented)
+    const ReportsPage(), // <<--- Now actual page
   ];
 
   void _onNavTapped(int index) {
