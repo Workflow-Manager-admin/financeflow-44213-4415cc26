@@ -117,14 +117,14 @@ class _MainContainerState extends State<MainContainer> {
 /// The Budgets Management Page allows users to add, edit, and delete budget categories with amounts.
 /// The UI updates live as changes are made.
 class BudgetManagementPage extends StatefulWidget {
-  BudgetManagementPage({super.key});
+  const BudgetManagementPage({super.key});
 
   @override
   State<BudgetManagementPage> createState() => _BudgetManagementPageState();
 }
 
 class _BudgetManagementPageState extends State<BudgetManagementPage> {
-  List<_BudgetItem> _budgets = [
+  final List<_BudgetItem> _budgets = [
     _BudgetItem(category: "Food", amount: 400.0),
     _BudgetItem(category: "Utilities", amount: 170.0),
     _BudgetItem(category: "Entertainment", amount: 150.0),
