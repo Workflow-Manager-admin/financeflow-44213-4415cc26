@@ -3,16 +3,38 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:financeflow/main.dart';
 
 void main() {
-  testWidgets('App generation message displayed', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App root widget and dashboard rendered', (WidgetTester tester) async {
+    await tester.pumpWidget(const FinanceFlowApp());
 
-    expect(find.text('financeflow App is being generated...'), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // The dashboard title should show by default.
+    expect(find.text('Dashboard'), findsOneWidget);
+
+    // There should be a summary card with the Total Balance.
+    expect(find.text('Total Balance'), findsOneWidget);
+
+    // Find the Recent Transactions label.
+    expect(find.text('Recent Transactions'), findsOneWidget);
+
+    // There should be at least one table row for transactions.
+    expect(find.byType(DataTable), findsOneWidget);
   });
 
-  testWidgets('App bar has correct title', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Navigation bar switches pages', (WidgetTester tester) async {
+    await tester.pumpWidget(const FinanceFlowApp());
 
-    expect(find.text('financeflow'), findsOneWidget);
+    // Initially, dashboard is selected.
+    expect(find.text('Dashboard'), findsOneWidget);
+
+    // Navigate to Budgets tab
+    await tester.tap(find.byIcon(Icons.account_balance_wallet_rounded));
+    await tester.pump();
+
+    expect(find.text('Budgets'), findsOneWidget);
+
+    // Navigate to Reports tab
+    await tester.tap(find.byIcon(Icons.analytics_rounded));
+    await tester.pump();
+
+    expect(find.text('Reports'), findsOneWidget);
   });
 }
