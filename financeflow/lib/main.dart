@@ -29,7 +29,7 @@ class FinanceFlowApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: secondaryColor,
         appBarTheme: AppBarTheme(
-          backgroundColor: primaryColor,
+          surfaceTintColor: primaryColor,
           foregroundColor: Colors.white,
         ),
         cardColor: Colors.white,
@@ -129,7 +129,6 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color primaryColor = Theme.of(context).primaryColor;
     final Color accentColor = Theme.of(context).colorScheme.secondary;
-    final Color secondaryColor = Theme.of(context).colorScheme.surface;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -297,7 +296,7 @@ class _TransactionsTable extends StatelessWidget {
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: DataTable(
-        headingRowColor: MaterialStateProperty.all(Colors.grey.shade200),
+        headingRowColor: WidgetStateProperty.all(Colors.grey.shade200),
         columns: const [
           DataColumn(label: Text('Date')),
           DataColumn(label: Text('Desc')),
@@ -321,7 +320,7 @@ class _TransactionsTable extends StatelessWidget {
                 style: const TextStyle(fontSize: 13),
               )),
               DataCell(Text(
-                (isIncome ? '+' : '') + '\$${tx['amount'].toStringAsFixed(2)}',
+                '${isIncome ? '+' : ''}\$${tx['amount'].toStringAsFixed(2)}',
                 style: TextStyle(
                   color: isIncome ? Colors.green : Colors.redAccent,
                   fontWeight: FontWeight.bold,
