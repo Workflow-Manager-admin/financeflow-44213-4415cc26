@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(FinanceFlowApp());
+  runApp(const FinanceFlowApp());
 }
 
 /// PUBLIC_INTERFACE
@@ -200,8 +200,9 @@ class _SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         child: Column(
           children: [
+            // Use new style for color alpha (for deprecation proofing)
             CircleAvatar(
-              backgroundColor: color.withOpacity(0.13),
+              backgroundColor: color.withAlpha((0.13 * 255).round()),
               child: Icon(icon, color: color),
             ),
             const SizedBox(height: 10),
