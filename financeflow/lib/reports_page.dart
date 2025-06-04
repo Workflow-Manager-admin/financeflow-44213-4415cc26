@@ -183,7 +183,7 @@ class ReportsPage extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       margin: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.07),
+        color: primaryColor.withAlpha((0.07 * 255).round()),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -227,7 +227,7 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: color.withOpacity(0.1),
+      color: color.withAlpha((0.1 * 255).round()),
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: SizedBox(
